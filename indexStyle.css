@@ -8,13 +8,23 @@ body {
     background-color: cadetblue;
 
 }
-.perspectiveCard {
+
+.hoverCard {
     width: 300px;
     height: 400px;
+    
+    border-radius: 3px;
+    box-shadow: 0 0 8px blueviolet;
+}
+
+#card1 {
     position: absolute;
     top: 50px;
     left: 50px;
-    background-color: blueviolet;
-    border-radius: 3px;
-    box-shadow: 3px 3px 3px, -3px -3px 3px;
+}
+
+#card2 {
+    position: absolute;
+    top: 50px;
+    left: 400px;
 }
