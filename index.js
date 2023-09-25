@@ -40,8 +40,11 @@ window.onload = function () {
         }
         else {
             element.addEventListener("touchmove", function(e) {
-                let x = e.clientX;
-                let y = e.clientY;
+                //Prevents window scrolling
+                e.preventDefault();
+                //Adjusted for touch X and Y
+                let x = e.touches[0].clientX;
+                let y = e.touches[0].clientY;
                 if(x >= card.x && x <= card.x + card.width && y >= card.y && y <= card.y + card.height)
                 {
                     // Interval transformation
