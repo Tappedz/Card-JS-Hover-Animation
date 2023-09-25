@@ -1,6 +1,12 @@
-var cards;
+var cards, mobile;
 const degRot = 8;
 window.onload = function () {
+    if(detectMobileUser()) {
+        mobile = true;
+    }
+    else {
+        mobile = false;
+    }
     cards = Array.from(document.getElementsByClassName("hoverCard"));
     cards.forEach(element => {
         var card = {x: element.getBoundingClientRect().left, y: element.getBoundingClientRect().top, 
@@ -12,24 +18,46 @@ window.onload = function () {
         canvas.height = card.height;
         card.canvas = canvas;
         card.ctx = canvas.getContext("2d");
-        element.addEventListener("mousemove", function(e) {
-            let x = e.clientX;
-            let y = e.clientY;
-            if(x >= card.x && x <= card.x + card.width && y >= card.y && y <= card.y + card.height)
-            {
-                // Interval transformation
-                let transformedX, transformedY;
-                transformedX = intervalTransformation(card.x, card.x + card.width, 0, Math.PI, x); 
-                transformedY = intervalTransformation(card.y, card.y + card.height, 0, Math.PI, y);
-                // Apply rotation 
-                element.style.transform = "perspective(1000px) rotateY(" + degRot * Math.cos(transformedX) + "deg) rotateX(" + -degRot * Math.cos(transformedY) + "deg)";
+        if(!mobile) {
+            element.addEventListener("mousemove", function(e) {
+                let x = e.clientX;
+                let y = e.clientY;
+                if(x >= card.x && x <= card.x + card.width && y >= card.y && y <= card.y + card.height)
+                {
+                    // Interval transformation
+                    let transformedX, transformedY;
+                    transformedX = intervalTransformation(card.x, card.x + card.width, 0, Math.PI, x); 
+                    transformedY = intervalTransformation(card.y, card.y + card.height, 0, Math.PI, y);
+                    // Apply rotation 
+                    element.style.transform = "perspective(1000px) rotateY(" + degRot * Math.cos(transformedX) + "deg) rotateX(" + -degRot * Math.cos(transformedY) + "deg)";
+                    card.ctx.clearRect(0, 0, card.canvas.width, card.canvas.height);
+                    createReflectionEffect(card, card.ctx, x, y);
+                }     
+            });
+            element.addEventListener("mouseleave", function() {
                 card.ctx.clearRect(0, 0, card.canvas.width, card.canvas.height);
-                createReflectionEffect(card, card.ctx, x, y);
-            }     
-        });
-        element.addEventListener("mouseleave", function() {
-            card.ctx.clearRect(0, 0, card.canvas.width, card.canvas.height);
-        });
+            });
+        }
+        else {
+            element.addEventListener("touchmove", function(e) {
+                let x = e.clientX;
+                let y = e.clientY;
+                if(x >= card.x && x <= card.x + card.width && y >= card.y && y <= card.y + card.height)
+                {
+                    // Interval transformation
+                    let transformedX, transformedY;
+                    transformedX = intervalTransformation(card.x, card.x + card.width, 0, Math.PI, x); 
+                    transformedY = intervalTransformation(card.y, card.y + card.height, 0, Math.PI, y);
+                    // Apply rotation 
+                    element.style.transform = "perspective(1000px) rotateY(" + degRot * Math.cos(transformedX) + "deg) rotateX(" + -degRot * Math.cos(transformedY) + "deg)";
+                    card.ctx.clearRect(0, 0, card.canvas.width, card.canvas.height);
+                    createReflectionEffect(card, card.ctx, x, y);
+                }     
+            });
+            element.addEventListener("touchend", function() {
+                card.ctx.clearRect(0, 0, card.canvas.width, card.canvas.height);
+            });
+        }  
     });
 }
 
@@ -81,6 +109,21 @@ function createLightEffect(ctx, height, offset) {
     ctx.fillStyle = "white";
     ctx.globalAlpha = 0.01;
     ctx.fill();
+}
+
+function detectMobileUser() {
+    const mobileDevices = [
+        /Android/i,
+        /webOS/i,
+        /iPhone/i,
+        /iPad/i,
+        /iPod/i,
+        /BlackBerry/i,
+        /Windows Phone/i
+    ];
+    return mobileDevices.some((mobDev) => {
+        return navigator.userAgent.match(mobDev);
+    })
 }
 /*
     //First implementation (simple and not smooth)
